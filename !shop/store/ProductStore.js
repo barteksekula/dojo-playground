@@ -13,6 +13,10 @@ define([
 
         getAll: function () {
             return this._memory.data;
+        },
+
+        query: function(filter) {
+            return this._memory.query(filter);
         }
     });
 

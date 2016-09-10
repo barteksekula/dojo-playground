@@ -1,37 +1,32 @@
 require([
     "dojo/on",
     "dojo/dom",
-    "dijit/registry",
+    "dojo/dom-construct",
+    "dojo/dnd/Source",
+    "dojo/topic",
+    "dojo/_base/array",
     "dijit/layout/BorderContainer",
     "dijit/layout/ContentPane",
     "product/ProductWidget",
     "filters/FiltersWidget",
+    "cart/CartWidget",
     "store/ProductStore",
     "dojo/domReady!"
-], function (on, dom, registry, BorderContainer, ContentPane, ProductWidget, FiltersWidget, ProductStore) {
-
-    var x = new ProductStore();
-
-    var items = x.getAll();
-    debugger;
-
-    // create the BorderContainer and attach it to our appLayout div
+], function (on, dom, domConstruct, Source, topic, arrayUtil, BorderContainer, ContentPane, ProductWidget, FiltersWidget, CartWidget, ProductStore) {
     var appLayout = new BorderContainer({
         design: "headline"
     }, "appLayout");
 
-    // create the TabContainer
-    var contentTabs = new ContentPane({
+    var mainContent = new ContentPane({
         region: "center",
-        id: "contentTabs",
+        id: "mainContent",
         tabPosition: "bottom",
         class: "centerPanel",
         content: "Main content"
     });
 
-    appLayout.addChild(contentTabs);
+    appLayout.addChild(mainContent);
 
-    // create and add the BorderContainer edge regions
     appLayout.addChild(
         new ContentPane({
             region: "top",
@@ -39,22 +34,53 @@ require([
             content: "Dojo Shop"
         })
     );
-    var contentPane = new ContentPane({
+    var leftContentPane = new ContentPane({
         region: "left",
         id: "leftCol", "class": "edgePanel",
         splitter: true
     });
 
+    var rightContentPane = new ContentPane({
+        region: "right",
+        id: "rightCol", "class": "edgePanel",
+        splitter: true
+    });
+
     appLayout.addChild(
-        contentPane
+        leftContentPane
     );
 
-    var filters = new FiltersWidget({
-        id: "filtersWidget",
-        region: "center"
-    });
-    contentPane.addChild(filters);
+    appLayout.addChild(
+        rightContentPane
+    );
 
-    // start up and do layout
+    var cart = new CartWidget({
+        id: "cart"
+    });
+
+    var filters = new FiltersWidget({
+        id: "filtersWidget"
+    });
+
+    function bindProducts(products, parentDomNode) {
+        arrayUtil.forEach(products, function(product){
+            var productWidget = new ProductWidget(product);
+            new Source(productWidget.domNode);
+            productWidget.placeAt(parentDomNode);
+        });
+    }
+
+    var productStore = new ProductStore();
+    var container = dom.byId("container");
+    topic.subscribe("filters-changed", function(filter) {
+        var products = productStore.query(filter);
+        domConstruct.empty(mainContent.domNode);
+        bindProducts(products, mainContent);
+    });
+
+    bindProducts(productStore.getAll(), mainContent);
+
+    leftContentPane.addChild(filters);
+    rightContentPane.addChild(cart);
     appLayout.startup();
 });

@@ -1,1 +1,1 @@
-# dojo-shop
+# dojo-playground
