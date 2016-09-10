@@ -16,8 +16,3 @@ html, body {
 .claro .demoLayout .edgePanel {
     background-color: #d0e9fc;
 }
-
-#viewsChart {
-    width: 550px;
-    height: 550px;
-}
