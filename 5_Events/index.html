@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Events</title>
+</head>
+<body>
+
+<div id="buttons">
+    <button id="myButton">Click me!</button>
+    <button id="myScopedButton1">Button 1</button>
+    <button id="myScopedButton2">Button 2</button>
+</div>
+<div id="myDiv">Hover over me!</div>
+
+<!-- configure Dojo -->
+<script>
+    // Instead of using data-dojo-config, we're creating a dojoConfig
+    // object *before* we load dojo.js; they're functionally identical,
+    // it's just easier to read this approach with a larger configuration.
+    var dojoConfig = {
+        async: true,
+        baseUrl: '.',
+        packages: [
+            {name: 'dojo', location: '../dojo'},
+            {name: 'dijit', location: '../dijit'},
+            {name: 'dojox', location: '../dojox'},
+            'demo'
+        ]
+    };
+</script>
+<!-- load Dojo -->
+<script src="../dojo/dojo.js"></script>
+
+<script>
+    require(["dojo/on", "dojo/dom", "dojo/dom-style", "dojo/mouse", "dojo/_base/lang", "dojo/query", "dojo/domReady!"],
+            function (on, dom, domStyle, mouse, lang) {
+                var myButton = dom.byId("myButton"),
+                        myDiv = dom.byId("myDiv");
+
+                on(myButton, "click", function (evt) {
+                    domStyle.set(myDiv, "backgroundColor", "black");
+                });
+
+                var handle = on(myButton, "click", function (evt) {
+                    domStyle.set(myDiv, "backgroundColor", "blue");
+                    handle.remove();
+                });
+
+                on.once(myButton, "click", function (evt) {
+                    domStyle.set(myDiv, "backgroundColor", "yellow");
+                });
+
+                on(myDiv, mouse.enter, function (evt) {
+                    domStyle.set(myDiv, "backgroundColor", "red");
+                });
+                on(myDiv, mouse.leave, function (evt) {
+                    domStyle.set(myDiv, "backgroundColor", "");
+                });
+
+                var myScopedButton1 = dom.byId("myScopedButton1");
+                var myScopedButton2 = dom.byId("myScopedButton2");
+
+                var myObject = {
+                    id: "myObject",
+                    onClick: function (evt) {
+                        alert("The scope of this handler is " + this.id);
+                        alert(evt.target);
+                    }
+                };
+
+                on(myScopedButton1, "click", myObject.onClick);
+                on(myScopedButton2, "click", lang.hitch(myObject, myObject.onClick));
+
+                // dojo/query is needed for this to work...
+                var div = dom.byId("buttons");
+                on(div, "#myScopedButton1:click", function() {
+                    alert('event delegated to div...');
+                });
+
+                //lang hitch tests
+
+                var T = function (number) {
+                    var privateVariable = number * 5;
+                    this.privateValue = number;
+
+                    function privateMethod(number) {
+                        return number * 10;
+                    }
+
+                    return {
+                        lala: lang.hitch(this, function () {
+                            debugger;
+                            alert(this.privateValue);
+                            alert(privateVariable);
+                            alert(privateMethod(2))
+                        })
+                    };
+                };
+
+                var t = new T(5);
+                t.lala();
+            });
+</script>
+</body>
+</html>

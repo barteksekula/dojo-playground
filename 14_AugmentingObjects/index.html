@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>
+        Demo: lang.mixin
+    </title>
+    <script src="../dojo/dojo.js" data-dojo-config="isDebug: 1, async: 1, parseOnLoad: 1"></script>
+    <script>
+
+        require(["dojo/dom", "dojo/_base/declare", "dojo/_base/lang", "dojo/json"], function (dom, declare, lang, JSON) {
+
+            var defaultSettings = {
+                useTheForce: true,
+                isEvil: false,
+                length: 75,
+                color: 'blue',
+                test: function () {
+                    return "function is here!";
+                }
+            };
+
+            function Lightsaber(settings) {
+                // `defaultSettings` is first mixed into the blank object,
+                // then `settings` is mixed into the blank object, overriding
+                // any properties from `defaultSettings` without altering
+                // the `defaultSettings` object
+                this.settings = lang.mixin({}, defaultSettings, settings);
+                this.regularFunction = function() {
+                    return "regular";
+                }
+            }
+
+            var darthsaber = new Lightsaber({
+                isEvil: true,
+                color: 'red'
+            });
+
+            var inheritedSaber = lang.mixin(darthsaber, {
+                extraFunction: function() {
+                    return "extra";
+                }
+            });
+
+            var safeInheritedSaber = declare.safeMixin({}, darthsaber);
+
+            var log = dom.byId("log");
+            var text = JSON.stringify(darthsaber.settings);
+
+            log.innerText = text + "\n";
+            log.innerText += darthsaber.settings.test() + "\n";
+            log.innerText += darthsaber.regularFunction() + "\n";
+            log.innerText += JSON.stringify(inheritedSaber) + "\n";
+            log.innerText += darthsaber.constructor + "\n";
+            log.innerText += darthsaber.extraFunction + "\n";
+            log.innerText += inheritedSaber.constructor + "\n";
+            log.innerText += inheritedSaber.extraFunction + "\n";
+            log.innerText += safeInheritedSaber.extraFunction + "\n";
+
+            log.innerText += darthsaber.newFunction + "\n";
+            var n = {
+                newFunction: function() {
+                    return "new function";
+                }
+            };
+            lang.mixin(Lightsaber, n);
+            log.innerText += darthsaber.newFunction + "\n";
+
+            // this will modify the object prototype
+            lang.extend(Lightsaber, n);
+            log.innerText += darthsaber.newFunction + "\n";
+
+            var darthsaberShallowCopy = darthsaber;
+            darthsaberShallowCopy.settings.useTheForce = false;
+            log.innerText += "Original: " + JSON.stringify(darthsaber) + "\n";
+            log.innerText += "Shallow Copy: " + JSON.stringify(darthsaberShallowCopy) + "\n";
+
+            var darthsaberDeepCopy = lang.clone(darthsaber);
+            darthsaberDeepCopy.settings.useTheForce = true;
+            log.innerText += "Original: " + JSON.stringify(darthsaber) + "\n";
+            log.innerText += "Deep Copy: " + JSON.stringify(darthsaberDeepCopy) + "\n";
+        });
+    </script>
+</head>
+<body>
+<span id="log"></span>
+</body>
+</html>

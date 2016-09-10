@@ -1,0 +1,43 @@
+
+
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Demo: Progammatic Layout</title>
+    <link rel="stylesheet" href="style.css" media="screen" />
+    <link rel="stylesheet" href="../dijit/themes/claro/claro.css" media="screen" />
+</head>
+<body class="claro">
+
+<!-- configure Dojo -->
+<script>
+    // Instead of using data-dojo-config, we're creating a dojoConfig
+    // object *before* we load dojo.js; they're functionally identical,
+    // it's just easier to read this approach with a larger configuration.
+    var dojoConfig = {
+        async: true,
+        baseUrl: '.',
+        packages: [
+            {name: 'dojo', location: '../dojo'},
+            {name: 'dijit', location: '../dijit'},
+            {name: 'dojox', location: '../dojox'},
+            'filters',
+            'product',
+            'store'
+        ],
+        deps: [
+                './app.js'
+        ]
+    };
+</script>
+
+<div id="appLayout" class="demoLayout"></div>
+<div id="startContent">
+asdassad
+</div>
+
+<script src="../dojo/dojo.js"></script>
+
+</body>
+</html>

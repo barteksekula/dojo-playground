@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Ajax</title>
+</head>
+<body>
+
+<script src="../dojo/dojo.js" data-dojo-config="isDebug: 1, async: 1, parseOnLoad: 1"></script>
+<script>
+    require(["dojo/request"], function (request) {
+        request("helloworld.txt").then(
+                function (text) {
+                    alert(text);
+                },
+                function (error) {
+                    alert("An error occurred: " + error);
+                }
+        );
+    });
+</script>
+</body>
+</html>

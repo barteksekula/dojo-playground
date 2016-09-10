@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Animation</title>
+    <link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+
+<button id="swapButton">Swap</button>
+
+<div class="container" id="container">
+    <div id="content1" class="contentBox" style="top: 0; left: 0">
+        <div class="innerBox">1: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</div>
+    </div>
+    <div id="content2" class="contentBox" style="top: 0; left: 250px">
+        <div class="innerBox">2: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</div>
+    </div>
+</div>
+
+<!-- configure Dojo -->
+<script>
+    // Instead of using data-dojo-config, we're creating a dojoConfig
+    // object *before* we load dojo.js; they're functionally identical,
+    // it's just easier to read this approach with a larger configuration.
+    var dojoConfig = {
+        async: true,
+        baseUrl: '.',
+        packages: [
+            {name: 'dojo', location: '../dojo'},
+            {name: 'dijit', location: '../dijit'},
+            {name: 'dojox', location: '../dojox'},
+            'demo'
+        ]
+    };
+</script>
+<!-- load Dojo -->
+<script src="../dojo/dojo.js"></script>
+
+<script>
+    require(["dojo/_base/fx", "dojo/fx", "dojo/fx/easing", "dojo/dom-style", "dojo/dom", "dojo/on", "dojo/aspect", "dojo/domReady!"], function(baseFx, fx, easing, domStyle, dom, on, aspect) {
+
+        function swapAnim(node1, node2) {
+            var posn1 = parseInt(domStyle.get(node1, "left")),
+                    posn2 = parseInt(domStyle.get(node2, "left"));
+
+            return moveNodes = fx.combine([
+                fx.slideTo({
+                    duration: 1200,
+                    node: node2,
+                    left: posn1
+                }),
+                fx.slideTo({
+                    duration: 1200,
+                    node: node1,
+                    left: posn2
+                })
+            ]);
+        }
+
+        var originalOrder = true; // track which order our content nodes are in
+
+        var swapButton = dom.byId("swapButton"),
+                c1 = originalOrder ? dom.byId("content1") : dom.byId("content2"),
+                c2 = originalOrder ? dom.byId("content2") : dom.byId("content1"),
+                container = dom.byId("container");
+
+        // Set up a click handler to run our animations
+        on(swapButton, "click", function(evt){
+
+            // chain the swap nodes animation
+            // with another to fade out a background color in our container
+            var anim = fx.chain([
+                swapAnim(c1, c2),
+                baseFx.animateProperty({
+                    node: container,
+                    properties: {
+                        backgroundColor: "#fff"
+                    }
+                }),
+
+            ]);
+            // before the animation begins, set initial container background
+            aspect.before(anim, "beforeBegin", function(){
+                domStyle.set(container, "backgroundColor", "#eee");
+            });
+
+            // when the animation ends, toggle the originalOrder
+            on(anim, "End", function(n1, n2){
+                originalOrder = !originalOrder;
+            });
+
+            anim.play();
+        });
+    });
+</script>
+</body>
+</html>

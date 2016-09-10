@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Product 1",
+    "image": "./product/data/product1.png",
+    "description": "Lorem ipsum dolorum...."
+  },
+  {
+    "name": "Product 2",
+    "description": "Lorem ipsum dolorum...."
+  }
+]

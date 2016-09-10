@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Effects</title>
+</head>
+<body>
+
+<button id="slideAwayButton">Slide block away</button>
+<button id="slideBackButton">Slide block back</button>
+
+<button id="slideAwayButtonCombine">Slide block away (combine)</button>
+<button id="slideBackButtonCombine">Slide block back (combine)</button>
+
+<div id="slideTarget" class="red-block slide chain">
+    A red block
+</div>
+
+<!-- configure Dojo -->
+<script>
+    // Instead of using data-dojo-config, we're creating a dojoConfig
+    // object *before* we load dojo.js; they're functionally identical,
+    // it's just easier to read this approach with a larger configuration.
+    var dojoConfig = {
+        async: true,
+        baseUrl: '.',
+        packages: [
+            {name: 'dojo', location: '../dojo'},
+            {name: 'dijit', location: '../dijit'},
+            {name: 'dojox', location: '../dojox'},
+            'demo'
+        ]
+    };
+</script>
+<!-- load Dojo -->
+<script src="../dojo/dojo.js"></script>
+
+<script>
+    require(["dojo/_base/fx", "dojo/fx", "dojo/on", "dojo/dom", "dojo/domReady!"], function(baseFx, fx, on, dom) {
+
+        var slideAwayButton = dom.byId("slideAwayButton"),
+                slideBackButton = dom.byId("slideBackButton"),
+                slideTarget = dom.byId("slideTarget");
+
+        // Set up a couple of click handlers to run our chained animations
+        on(slideAwayButton, "click", function(evt){
+            fx.chain([
+                baseFx.fadeIn({ node: slideTarget }),
+                fx.slideTo({ node: slideTarget, left: "200", top: "200" }),
+                baseFx.fadeOut({ node: slideTarget })
+            ]).play();
+        });
+        on(slideBackButton, "click", function(evt){
+            fx.chain([
+                baseFx.fadeIn({ node: slideTarget }),
+                fx.slideTo({ node: slideTarget, left: "0", top: "100" }),
+                baseFx.fadeOut({ node: slideTarget })
+            ]).play();
+        });
+
+        var slideAwayButtonCombine = dom.byId("slideAwayButtonCombine"),
+                slideBackButtonCombine = dom.byId("slideBackButtonCombine");
+
+        // Set up a couple of click handlers to run our combined animations
+        on(slideAwayButtonCombine, "click", function(evt){
+            fx.combine([
+                baseFx.fadeIn({ node: slideTarget }),
+                fx.slideTo({ node: slideTarget, left: "200", top: "200" })
+            ]).play();
+        });
+        on(slideBackButtonCombine, "click", function(evt){
+            fx.combine([
+                fx.slideTo({ node: slideTarget, left: "0", top: "100" }),
+                baseFx.fadeOut({ node: slideTarget })
+            ]).play();
+        });
+    });
+</script>
+</body>
+</html>

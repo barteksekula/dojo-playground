@@ -1,0 +1,39 @@
+
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Query</title>
+    <style>
+        .red {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div id="list">
+    <div class="odd">One</div>
+    <div class="even">Two</div>
+    <div class="odd">Three</div>
+    <div class="even">Four</div>
+    <div class="odd">Five</div>
+    <div class="even">Six</div>
+</div>
+
+<script src="../dojo/dojo.js" data-dojo-config="isDebug: 1, async: 1, parseOnLoad: 1"></script>
+<script>
+    // Wait for the DOM to be ready before working with it
+    require(["dojo/query", "dojo/dom-class", "dojo/domReady!"],
+            function(query, domClass) {
+
+                query(".odd").forEach(function(node, index, nodelist){
+                    // for each node in the array returned by query,
+                    // execute the following code
+                    domClass.add(node, "red");
+                });
+
+            });
+</script>
+</body>
+</html>

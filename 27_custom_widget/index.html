@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+    // Instead of using data-dojo-config, we're creating a dojoConfig
+    // object *before* we load dojo.js; they're functionally identical,
+    // it's just easier to read this approach with a larger configuration.
+    var dojoConfig = {
+        async: true,
+        baseUrl: '.',
+        packages: [
+            {name: 'dojo', location: '../dojo'},
+            {name: 'dijit', location: '../dijit'},
+            {name: 'dojox', location: '../dojox'},
+            'product'
+        ]
+    };
+</script>
+<!-- load Dojo -->
+<script src="../dojo/dojo.js"></script>
+
+<h2>Products</h2>
+<div id="container">
+</div>
+<script>
+    require(["dojo/request", "dojo/dom", "dojo/_base/array", "product/ProductWidget", "dojo/domReady!"],
+            function(request, dom, arrayUtil, ProductWidget){
+                request("./product/data/products.json", {
+                    handleAs: "json"
+                }).then(function(products){
+                    // Get a reference to our container
+                    var container = dom.byId("container");
+
+                    arrayUtil.forEach(products, function(product){
+                        new ProductWidget(product).placeAt(container);
+                    });
+                });
+            });
+</script>
+</body>
+</html>

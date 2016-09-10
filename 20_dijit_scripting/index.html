@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Tutorial: Declarative Scripting</title>
+    <link rel="stylesheet" href="../dijit/themes/claro/claro.css" media="screen">
+</head>
+<body class="claro">
+<h1>Tutorial: Declarative Scripting</h1>
+<div id="someDialog"></div>
+<button type="button" id="myButton"></button>
+<script>
+    // Instead of using data-dojo-config, we're creating a dojoConfig
+    // object *before* we load dojo.js; they're functionally identical,
+    // it's just easier to read this approach with a larger configuration.
+    var dojoConfig = {
+        async: true,
+        baseUrl: '.',
+        packages: [
+            {name: 'dojo', location: '../dojo'},
+            {name: 'dijit', location: '../dijit'},
+            {name: 'dojox', location: '../dojox'},
+            'demo'
+        ]
+    };
+</script>
+<script src="../dojo/dojo.js" data-dojo-config="isDebug: 1, async: 1"></script>
+<script>
+    require(["dijit/form/Button", "dijit/Dialog"], function(Button, Dialog){
+        var myButton = new Button({
+                    label: "Click Me!",
+                    id: "myButton"
+                }, "myButton"),
+                someDialog = new Dialog({
+                    title: "Hello World!",
+                    content: "<p>I am a dialog. That makes me happy.</p>"
+                }, "someDialog");
+
+        myButton.on("click", function(){
+            someDialog.show();
+        });
+    });
+</script>
+</body>
+</html>
