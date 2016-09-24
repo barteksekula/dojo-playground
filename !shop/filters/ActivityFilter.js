@@ -20,33 +20,30 @@ define([
             inactive: false
         },
 
-        constructor: function() {
-
+        constructor: function (fieldName) {
+            this.fieldName = fieldName;
         },
 
-        getFilterValue: function() {
-            if((this._filterValue.active && this._filterValue.inactive)
+        getFilterValue: function () {
+            if ((this._filterValue.active && this._filterValue.inactive)
                 || (!this._filterValue.active && !this._filterValue.inactive)) {
                 return undefined;
             }
 
-            if(this._filterValue.active) {
-                return true;
-            }
-            if(this._filterValue.inactive) {
-                return false;
-            }
+            return lang.hitch(this, function (item) {
+                return item[this.fieldName] === this._filterValue.active;
+            });
         },
 
         postCreate: function () {
             this.inherited(arguments);
 
-            registry.byId("activityFilterActive").on("change", lang.hitch(this, function(isChecked){
+            registry.byId("activityFilterActive").on("change", lang.hitch(this, function (isChecked) {
                 this._filterValue.active = isChecked;
                 topic.publish("activity-changed", this.getFilterValue());
             }), true);
 
-            registry.byId("activityFilterInactive").on("change", lang.hitch(this, function(isChecked){
+            registry.byId("activityFilterInactive").on("change", lang.hitch(this, function (isChecked) {
                 this._filterValue.inactive = isChecked;
                 topic.publish("activity-changed", this.getFilterValue());
             }), true);
