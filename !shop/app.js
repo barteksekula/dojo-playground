@@ -62,11 +62,16 @@ require([
         id: "filtersWidget"
     });
 
+    function sourceItemCreator (item) {
+        var productWidget = new ProductWidget(item);
+
+        return { node:productWidget.domNode, data: item, type: ["product"] };
+    }
+
     function bindProducts(products, parentDomNode) {
+        var productsSource = new Source(parentDomNode.id, { creator: sourceItemCreator, copyOnly: true, generateText: false });
         arrayUtil.forEach(products, function(product){
-            var productWidget = new ProductWidget(product);
-            new Source(productWidget.domNode);
-            productWidget.placeAt(parentDomNode);
+            productsSource.insertNodes(false, [product]);
         });
     }
 
